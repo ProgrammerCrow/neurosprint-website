@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NeuroSprint - Train Your Brain. Master Your Reflexes.</title>
+  <meta name="description" content="Challenge your cognitive speed with the Stroop Effect. Discover your real Brain Age, sharpen your focus, and battle friends in split-screen 1v1 duels.">
+  <link rel="icon" type="image/png" href="assets/app_icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0A0E1A;
+      --card-bg: rgba(18, 24, 38, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --accent-cyan: #00F0FF;
+      --accent-purple: #8B5CF6;
+      --accent-pink: #EC4899;
+      --accent-amber: #F59E0B;
+      --accent-green: #10B981;
+      --gradient-primary: linear-gradient(135deg, #00F0FF 0%, #8B5CF6 100%);
+      --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Background Glows */
+    .glow-circle {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      z-index: -1;
+      pointer-events: none;
+    }
+    .glow-1 {
+      width: 650px;
+      height: 650px;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: radial-gradient(circle, rgba(0, 240, 255, 0.12) 0%, rgba(139, 92, 246, 0.08) 50%, transparent 70%);
+    }
+    .glow-2 {
+      width: 500px;
+      height: 500px;
+      bottom: 10%;
+      right: -100px;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Navigation */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10, 14, 26, 0.8);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .nav-wrapper {
+      height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 240, 255, 0.3);
+    }
+
+    .brand-name {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent-cyan);
+    }
+
+    .cta-btn-nav {
+      background: var(--gradient-primary);
+      color: #000 !important;
+      padding: 9px 20px;
+      border-radius: 9999px;
+      font-weight: 700 !important;
+      font-size: 0.9rem !important;
+      box-shadow: 0 4px 16px rgba(0, 240, 255, 0.3);
+      transition: transform 0.2s, box-shadow 0.2s !important;
+    }
+
+    .cta-btn-nav:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 240, 255, 0.5);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding-top: 160px;
+      padding-bottom: 90px;
+      text-align: center;
+    }
+
+    .pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 9999px;
+      background: rgba(0, 240, 255, 0.08);
+      border: 1px solid rgba(0, 240, 255, 0.25);
+      color: var(--accent-cyan);
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+      font-weight: 900;
+      letter-spacing: -1.5px;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero h1 span.gradient-text {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 36px;
+      line-height: 1.7;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 50px;
+    }
+
+    .app-store-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #000;
+      color: #fff;
+      padding: 12px 26px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .app-store-badge:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-cyan);
+    }
+
+    .app-store-badge svg {
+      width: 28px;
+      height: 28px;
+      fill: #fff;
+    }
+
+    .badge-text-top {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #94A3B8;
+      line-height: 1;
+    }
+
+    .badge-text-main {
+      font-size: 1.2rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .secondary-btn {
+      padding: 14px 28px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .secondary-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Interactive Demo Card */
+    .demo-wrapper {
+      max-width: 580px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 32px 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 240, 255, 0.1);
+      position: relative;
+    }
+
+    .demo-header {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent-cyan);
+      margin-bottom: 12px;
+    }
+
+    .demo-question {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .demo-stroop-word {
+      font-size: 3.5rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #EF4444; /* Red color */
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      text-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+      user-select: none;
+    }
+
+    .demo-options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    .demo-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #fff;
+      padding: 14px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .demo-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--accent-cyan);
+    }
+
+    .demo-feedback {
+      margin-top: 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      min-height: 24px;
+    }
+
+    /* Features Grid */
+    .features-section {
+      padding: 100px 0;
+    }
+
+    .section-title-wrap {
+      text-align: center;
+      max-width: 650px;
+      margin: 0 auto 60px;
+    }
+
+    .section-tag {
+      color: var(--accent-purple);
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 3.5vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 32px;
+      transition: transform 0.2s, border-color 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 240, 255, 0.3);
+    }
+
+    .feature-icon-box {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 22px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .feature-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
+    }
+
+    .feature-text {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      line-height: 1.65;
+    }
+
+    /* Science Callout */
+    .science-section {
+      padding: 80px 0;
+    }
+
+    .science-card {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(0, 240, 255, 0.05) 100%);
+      border: 1px solid rgba(139, 92, 246, 0.25);
+      border-radius: 24px;
+      padding: 48px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    @media (max-width: 800px) {
+      .science-card {
+        grid-template-columns: 1fr;
+        padding: 32px;
+      }
+    }
+
+    .science-h3 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .science-p {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 20px;
+    }
+
+    .stat-box {
+      background: rgba(10, 14, 26, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+    }
+
+    .stat-number {
+      font-size: 2.8rem;
+      font-weight: 900;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    /* CTA Bottom */
+    .cta-section {
+      padding: 100px 0;
+      text-align: center;
+    }
+
+    .cta-card {
+      background: radial-gradient(circle at center, rgba(0, 240, 255, 0.08) 0%, rgba(139, 92, 246, 0.05) 50%, var(--card-bg) 100%);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 64px 32px;
+      max-width: 860px;
+      margin: 0 auto;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .cta-card h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+
+    .cta-card p {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      max-width: 580px;
+      margin: 0 auto 36px;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 48px 0;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .footer-wrapper {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--accent-cyan);
+    }
+  </style>
+</head>
+<body>
+  <div class="glow-circle glow-1"></div>
+  <div class="glow-circle glow-2"></div>
+
+  <!-- Header -->
+  <header>
+    <div class="container nav-wrapper">
+      <a href="index.html" class="brand">
+        <img src="assets/app_icon.png" alt="NeuroSprint Logo" class="brand-icon">
+        <span class="brand-name">NeuroSprint</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#science">The Science</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="#download" class="cta-btn-nav">Get App</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="pill-badge">
+        <span>🧠 #1 Stroop Effect & Cognitive Reflex Trainer</span>
+      </div>
+      <h1>
+        Train Your Brain.<br>
+        <span class="gradient-text">Master Your Reflexes.</span>
+      </h1>
+      <p class="hero-subtitle">
+        Can your brain ignore what it reads and say what it sees? Test your cognitive flexibility with the scientific Stroop Effect, uncover your real Brain Age, and battle friends in split-screen duels.
+      </p>
+
+      <div class="hero-actions" id="download">
+        <a href="https://apps.apple.com" target="_blank" class="app-store-badge">
+          <svg viewBox="0 0 24 24">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.36c.64-.78 1.08-1.86.96-2.95-1 .04-2.15.66-2.82 1.44-.59.68-1.11 1.77-.97 2.83 1.12.09 2.2-.56 2.83-1.32z"/>
+          </svg>
+          <div>
+            <div class="badge-text-top">Download on the</div>
+            <div class="badge-text-main">App Store</div>
+          </div>
+        </a>
+        <a href="#interactive-demo" class="secondary-btn">Try Interactive Demo ↓</a>
+      </div>
+
+      <!-- Interactive Mini Demo -->
+      <div class="demo-wrapper" id="interactive-demo">
+        <div class="demo-header">Interactive Stroop Challenge</div>
+        <div class="demo-question">What is the <strong>font color</strong> of the text below? (Ignore what it says!)</div>
+        <div class="demo-stroop-word" id="demo-word">BLUE</div>
+        <div class="demo-options">
+          <button class="demo-btn" onclick="checkAnswer('blue')">Blue</button>
+          <button class="demo-btn" onclick="checkAnswer('red')">Red</button>
+          <button class="demo-btn" onclick="checkAnswer('yellow')">Yellow</button>
+          <button class="demo-btn" onclick="checkAnswer('green')">Green</button>
+        </div>
+        <div class="demo-feedback" id="demo-feedback"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Grid -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-title-wrap">
+        <div class="section-tag">Engineered for Focus</div>
+        <h2 class="section-title">Everything you need to sharpen mental speed</h2>
+        <p class="section-desc">Designed with cognitive neuroscientists' classic experiments, turned into an addictive, competitive experience.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-box">🧠</div>
+          <h3 class="feature-title">Clinical Brain Age Test</h3>
+          <p class="feature-text">Take our 15-question cognitive assessment. Our algorithm analyzes reaction speed (ms) and error margins to calculate your real biological brain age and global percentile rank.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">⚔️</div>
+          <h3 class="feature-title">1v1 Split-Screen Duel</h3>
+          <p class="feature-text">Turn your phone into a competitive battlefield! Place the device between you and a friend and battle face-to-face in a high-voltage reflex race.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">⚡</div>
+          <h3 class="feature-title">Multiple Game Modes</h3>
+          <p class="feature-text">Switch between Classic Stroop, fast-paced Color Clash, Reverse Stroop, and untimed Zen Mode for pure meditative focus whenever you need it.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">📈</div>
+          <h3 class="feature-title">7-Day Cognitive Analytics</h3>
+          <p class="feature-text">Track your cognitive evolution with custom Bézier spline curves. Watch your average response latency drop from 750ms to sub-400ms over time.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">🔥</div>
+          <h3 class="feature-title">Daily Streak Calendar</h3>
+          <p class="feature-text">Build the habit of daily cognitive conditioning. Maintain your streak, receive gentle evening reminders, and celebrate weekly milestones.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon-box">🛡️</div>
+          <h3 class="feature-title">100% Offline & Private</h3>
+          <p class="feature-text">No account creation, no trackers, zero personal data harvesting. All your brain age benchmarks and scores stay encrypted locally on your iPhone.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Science Section -->
+  <section class="science-section" id="science">
+    <div class="container">
+      <div class="science-card">
+        <div>
+          <div class="section-tag">Scientific Background</div>
+          <h3 class="science-h3">The Power of Cognitive Inhibition</h3>
+          <p class="science-p">
+            In 1935, psychologist <strong>John Ridley Stroop</strong> discovered that reading a word is an automatic, involuntary brain process, while naming its ink color requires deliberate executive control.
+          </p>
+          <p class="science-p">
+            When color and meaning clash (e.g. the word <span style="color:#EF4444; font-weight:700;">"BLUE"</span> written in red ink), your prefrontal cortex must actively suppress the automatic reading response. Regularly training this mental interference builds neuroplasticity, working memory, and rapid decision-making under pressure.
+          </p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="stat-box">
+            <div class="stat-number">-32%</div>
+            <div class="stat-label">Average reaction time improvement after 14 days</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number">15</div>
+            <div class="stat-label">Questions in the clinical Brain Age Assessment</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Bottom -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-card">
+        <h2>Ready to Test Your Mental Speed?</h2>
+        <p>Download NeuroSprint today and join thousands of players mastering their reflexes and unlocking their sharpest mind.</p>
+        <a href="https://apps.apple.com" target="_blank" class="app-store-badge">
+          <svg viewBox="0 0 24 24">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.36c.64-.78 1.08-1.86.96-2.95-1 .04-2.15.66-2.82 1.44-.59.68-1.11 1.77-.97 2.83 1.12.09 2.2-.56 2.83-1.32z"/>
+          </svg>
+          <div>
+            <div class="badge-text-top">Available on the</div>
+            <div class="badge-text-main">App Store</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container footer-wrapper">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="assets/app_icon.png" alt="NeuroSprint" style="width: 26px; height: 26px; border-radius: 6px;">
+        <span>&copy; 2026 ProgrammerCrow. All rights reserved.</span>
+      </div>
+      <div class="footer-links">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="mailto:support@programmercrow.com">Support</a>
+        <a href="https://github.com/ProgrammerCrow/NeuroSprint" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const trials = [
+      { text: 'BLUE', color: '#EF4444', correct: 'red', name: 'Red' },
+      { text: 'GREEN', color: '#F59E0B', correct: 'yellow', name: 'Yellow' },
+      { text: 'RED', color: '#3B82F6', correct: 'blue', name: 'Blue' },
+      { text: 'YELLOW', color: '#10B981', correct: 'green', name: 'Green' }
+    ];
+    let currentIndex = 0;
+
+    function checkAnswer(chosen) {
+      const feedback = document.getElementById('demo-feedback');
+      const current = trials[currentIndex];
+
+      if (chosen === current.correct) {
+        feedback.innerHTML = '<span style="color:#10B981;">⚡ Correct! Notice how your brain paused before saying ' + current.name + '? That is the Stroop Effect!</span>';
+      } else {
+        feedback.innerHTML = '<span style="color:#EF4444;">❌ Oops! You read the word instead of identifying its font color!</span>';
+      }
+
+      setTimeout(() => {
+        currentIndex = (currentIndex + 1) % trials.length;
+        const next = trials[currentIndex];
+        const wordEl = document.getElementById('demo-word');
+        wordEl.innerText = next.text;
+        wordEl.style.color = next.color;
+        wordEl.style.textShadow = '0 4px 20px ' + next.color + '66';
+        feedback.innerHTML = '';
+      }, 1400);
+    }
+  </script>
+</body>
+</html>
+
